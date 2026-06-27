@@ -81,7 +81,7 @@ export async function attachVideoSourceToScreen(
     video,
     scene,
     false,
-    false,
+    true,
     Texture.TRILINEAR_SAMPLINGMODE
   );
   const material = new StandardMaterial(`${source.id}-screen-material`, scene);
