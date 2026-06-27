@@ -6,19 +6,36 @@ Beyond is a lightweight virtual broadcast studio. The product goal is not to imi
 2. A real video/camera source shown inside the 3D environment.
 3. Replaceable sets and replaceable sources.
 4. OBS-based output for recording, streaming, and virtual camera.
-5. Evidence for every claimed feature.
+5. Proof for every claimed feature.
 
 ## Required reading for every AI agent
 
 Before editing code, every agent must read and follow:
 
 - `AGENTS.md`
+- `docs/PRODUCT_REQUIREMENTS.md`
+- `docs/MVP_SCOPE.md`
 - `docs/ARCHITECTURE.md`
+- `docs/FOLDER_STRUCTURE.md`
+- `docs/SCHEMAS.md`
+- `docs/RUNTIME_STATE_MACHINE.md`
 - `docs/DEPENDENCY_DECISIONS.md`
+- `docs/PERFORMANCE_BUDGET.md`
+- `docs/ASSET_PIPELINE.md`
+- `docs/OBS_OUTPUT_GUIDE.md`
+- `docs/UI_CONTRACT.md`
+- `docs/TESTING_STRATEGY.md`
+- `docs/QUALITY_GATE.md`
 - `docs/EVIDENCE_GATE.md`
+- `docs/ERROR_HANDLING.md`
+- `docs/DIAGNOSTICS_SPEC.md`
 - `docs/NO_FAKE_UI.md`
+- `docs/MODEL_ROUTING.md`
 - `docs/AI_MODEL_STRATEGY.md`
+- `docs/RESEARCH_NOTES.md`
 - `docs/RESEARCH_BASIS.md`
+- `docs/ROADMAP.md`
+- `docs/ADR/0001-foundation-architecture.md`
 
 Claude Code must also read `CLAUDE.md`.
 Cursor must use the rules inside `.cursor/rules/`.
@@ -32,10 +49,10 @@ Build the MVP around:
 - TypeScript
 - Babylon.js
 - OBS Browser Source or OBS window capture
-- Playwright evidence tests
+- Playwright checks
 - Vitest/unit tests
 
-Do not add OBS plugin development, GStreamer, DeckLink, NDI, Electron, Unreal, Godot, A-Frame, or custom FFmpeg encoding until the foundation passes the evidence gates.
+Do not add OBS plugin development, GStreamer, DeckLink, NDI, Electron, Unreal, Godot, A-Frame, or custom FFmpeg output until the foundation passes the gates.
 
 ## First product milestone
 
