@@ -13,7 +13,7 @@ The first stable foundation is:
 - Replaceable 3D environments.
 - Replaceable video sources.
 - OBS-based output for recording, streaming, and virtual camera.
-- Evidence for every feature claim.
+- Proof for every feature claim.
 
 ## Non-negotiable engineering principle
 
@@ -35,7 +35,7 @@ Approved for the foundation:
 - OBS Browser Source or OBS window capture for output
 - Optimized glTF or GLB assets
 
-## Frozen until the evidence gate passes
+## Frozen until the quality gate passes
 
 Do not add these until the MVP core passes a 30-minute stability test and the decision is documented in `docs/DEPENDENCY_DECISIONS.md`:
 
@@ -43,7 +43,7 @@ Do not add these until the MVP core passes a 30-minute stability test and the de
 - Direct libobs plugin work
 - DeckLink direct SDK integration
 - NDI SDK integration
-- Custom FFmpeg encoding pipeline
+- Custom FFmpeg output pipeline
 - Electron desktop packaging
 - Godot
 - Three.js
@@ -59,12 +59,26 @@ Do not add these until the MVP core passes a 30-minute stability test and the de
 
 Before any code change, read:
 
-1. `docs/ARCHITECTURE.md`
-2. `docs/DEPENDENCY_DECISIONS.md`
-3. `docs/EVIDENCE_GATE.md`
-4. `docs/NO_FAKE_UI.md`
-5. `docs/AI_MODEL_STRATEGY.md`
-6. `docs/RESEARCH_BASIS.md`
+1. `docs/PRODUCT_REQUIREMENTS.md`
+2. `docs/MVP_SCOPE.md`
+3. `docs/ARCHITECTURE.md`
+4. `docs/FOLDER_STRUCTURE.md`
+5. `docs/SCHEMAS.md`
+6. `docs/RUNTIME_STATE_MACHINE.md`
+7. `docs/DEPENDENCY_DECISIONS.md`
+8. `docs/PERFORMANCE_BUDGET.md`
+9. `docs/ASSET_PIPELINE.md`
+10. `docs/OBS_OUTPUT_GUIDE.md`
+11. `docs/UI_CONTRACT.md`
+12. `docs/TESTING_STRATEGY.md`
+13. `docs/QUALITY_GATE.md`
+14. `docs/ERROR_HANDLING.md`
+15. `docs/DIAGNOSTICS_SPEC.md`
+16. `docs/NO_FAKE_UI.md`
+17. `docs/MODEL_ROUTING.md`
+18. `docs/RESEARCH_NOTES.md`
+19. `docs/ROADMAP.md`
+20. `docs/ADR/0001-foundation-architecture.md`
 
 ## Reasoning order
 
@@ -76,12 +90,12 @@ Before changing files, every agent must:
 4. Check the frozen-dependency list.
 5. Make the smallest safe patch.
 6. Run available verification.
-7. Report evidence and limitations.
+7. Report proof and limitations.
 
 ## Accuracy rules
 
 - Do not invent files, functions, APIs, or dependencies.
-- Do not claim a feature works unless it has evidence.
+- Do not claim a feature works unless it has proof.
 - Do not create fake source lists, fake sets, fake buttons, fake uploads, or fake diagnostics.
 - Do not mark mock surfaces as complete.
 - Do not add packages without updating `docs/DEPENDENCY_DECISIONS.md`.
@@ -101,7 +115,7 @@ Every AI patch must end with:
 
 ### What now works
 
-### Evidence
+### Checks
 - Typecheck:
 - Tests:
 - Build:
@@ -127,7 +141,7 @@ A patch must not be accepted if:
 - Source switching breaks.
 - Set switching breaks.
 - It adds frozen dependencies without an architecture decision.
-- It gives no evidence.
+- It gives no proof.
 - It replaces actual implementation with mock UI.
 
 ## Definition of done for the foundation
@@ -142,7 +156,7 @@ The foundation is done only when:
 6. Set replacement works.
 7. OBS can capture the output.
 8. The app can run for 30 minutes without crashing.
-9. Screenshots or recordings exist as evidence.
+9. Screenshots or recordings exist as proof.
 10. Tests and build pass.
 
 Working simple beats beautiful fake.
