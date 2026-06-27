@@ -34,7 +34,6 @@ Do not rely on memory alone. When uncertain, inspect the repository. If memory c
 Use these local skills when relevant:
 
 - `.claude/skills/beyond-3d-engine/SKILL.md`
-- `.claude/skills/beyond-video-pipeline/SKILL.md`
 - `.claude/skills/beyond-evidence-audit/SKILL.md`
 
 ## Claude-specific caution
