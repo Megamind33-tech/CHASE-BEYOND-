@@ -16,7 +16,7 @@ describe("schema contracts", () => {
           id: "main-screen",
           meshName: "Screen_Main",
           label: "Main screen",
-          defaultSourceId: "none"
+          defaultSourceId: "sample-video"
         }
       ]
     });

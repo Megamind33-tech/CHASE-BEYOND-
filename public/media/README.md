@@ -1,5 +1,7 @@
 # Development media
 
-Place lightweight sample media here for local development only.
+This folder contains lightweight sample media for local development only.
 
-No sample video is committed in this foundation patch, so the app reports the sample source as unavailable instead of pretending real media exists.
+`sample-video.mp4` is the MDN CC0 flower sample video:
+
+https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4

@@ -4,6 +4,10 @@ import { useDiagnosticsStore } from "../diagnostics/diagnosticsStore";
 import { createStarterScene } from "../scene/createStarterScene";
 import { findScreenMesh } from "../scene/screenBinding";
 import { loadSetManifest } from "../sets/setLoader";
+import {
+  attachVideoSourceToScreen,
+  type VideoSourceBinding
+} from "../sources/createVideoSourceTexture";
 import { getSourceById } from "../sources/sourceRegistry";
 import type { SourceState, StudioRuntimeHandle } from "./runtimeTypes";
 
@@ -11,6 +15,7 @@ type CreateStudioRuntimeOptions = {
   canvas: HTMLCanvasElement;
   activeSetId: string;
   activeSourceId: string;
+  signal?: AbortSignal;
 };
 
 function getFriendlyError(error: unknown): string {
@@ -29,16 +34,31 @@ function getCanvasSize(canvas: HTMLCanvasElement): string {
   return `${canvas.width}x${canvas.height}`;
 }
 
+function createDisposedRuntimeHandle(): StudioRuntimeHandle {
+  return {
+    sceneHasScreenMain: () => false,
+    dispose: () => undefined
+  };
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw new Error("Runtime creation aborted.");
+  }
+}
+
 export async function createStudioRuntime({
   canvas,
   activeSetId,
-  activeSourceId
+  activeSourceId,
+  signal
 }: CreateStudioRuntimeOptions): Promise<StudioRuntimeHandle> {
   const updateDiagnostics = useDiagnosticsStore.getState().updateDiagnostics;
   const source = getSourceById(activeSourceId);
   const sourceState: SourceState = source?.state ?? "error";
   let engine: Engine | undefined;
   let scene: Scene | undefined;
+  let videoBinding: VideoSourceBinding | null = null;
   let disposed = false;
   let screenMainFound = false;
 
@@ -55,6 +75,8 @@ export async function createStudioRuntime({
       message: source?.message
     });
 
+    throwIfAborted(signal);
+
     engine = new Engine(canvas, true, {
       preserveDrawingBuffer: true,
       stencil: true,
@@ -62,12 +84,9 @@ export async function createStudioRuntime({
     });
     const loadedSet = await loadSetManifest(activeSetId);
 
-    if (disposed) {
+    if (disposed || signal?.aborted) {
       engine.dispose();
-      return {
-        sceneHasScreenMain: () => false,
-        dispose: () => undefined
-      };
+      return createDisposedRuntimeHandle();
     }
 
     scene = new Scene(engine);
@@ -80,10 +99,23 @@ export async function createStudioRuntime({
       throw new Error("Required screen mesh was not found in the model.");
     }
 
+    throwIfAborted(signal);
+
+    videoBinding = source
+      ? await attachVideoSourceToScreen(starterScene.scene, screenMesh, source, signal)
+      : null;
+
+    if (signal?.aborted) {
+      videoBinding?.dispose();
+      scene.dispose();
+      engine.dispose();
+      return createDisposedRuntimeHandle();
+    }
+
     updateDiagnostics({
       studioState: loadedSet.proceduralFallbackActive ? "degraded" : "ready",
       setState: "ready",
-      sourceState,
+      sourceState: videoBinding ? "active" : sourceState,
       activeSetId: loadedSet.manifest.id,
       activeSourceId,
       renderStatus: "Render loop running.",
@@ -127,12 +159,21 @@ export async function createStudioRuntime({
       dispose: () => {
         disposed = true;
         window.removeEventListener("resize", handleResize);
+        videoBinding?.dispose();
         scene?.dispose();
         engine?.dispose();
       }
     };
   } catch (error) {
+    if (signal?.aborted) {
+      videoBinding?.dispose();
+      scene?.dispose();
+      engine?.dispose();
+      return createDisposedRuntimeHandle();
+    }
+
     const friendlyError = getFriendlyError(error);
+    videoBinding?.dispose();
     scene?.dispose();
     engine?.dispose();
     updateDiagnostics({

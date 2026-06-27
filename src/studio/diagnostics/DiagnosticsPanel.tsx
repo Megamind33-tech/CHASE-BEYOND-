@@ -1,4 +1,5 @@
 import { useDiagnosticsStore } from "./diagnosticsStore";
+import { getSourceById } from "../sources/sourceRegistry";
 
 function formatFps(fps?: number): string {
   return typeof fps === "number" ? String(Math.round(fps)) : "...";
@@ -25,7 +26,7 @@ function formatSource(sourceId?: string): string {
     return "None";
   }
 
-  return sourceId;
+  return getSourceById(sourceId)?.name ?? sourceId;
 }
 
 function formatObsStatus(status: string): string {
