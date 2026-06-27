@@ -1,5 +1,4 @@
 import {
-  ArcRotateCamera,
   Color3,
   Color4,
   DirectionalLight,
@@ -8,6 +7,7 @@ import {
   MeshBuilder,
   Scene,
   StandardMaterial,
+  UniversalCamera,
   Vector3
 } from "@babylonjs/core";
 import { REQUIRED_SCREEN_MESH } from "./screenBinding";
@@ -24,16 +24,13 @@ export function createStarterScene(
   const scene = engineScene;
   scene.clearColor = new Color4(0.02, 0.04, 0.08, 1);
 
-  const camera = new ArcRotateCamera(
+  const camera = new UniversalCamera(
     "StudioCamera",
-    Math.PI / 2,
-    Math.PI / 2.6,
-    8,
-    new Vector3(0, 1.5, 0),
+    new Vector3(0, 2.15, -7),
     scene
   );
-  camera.lowerRadiusLimit = 5;
-  camera.upperRadiusLimit = 12;
+  camera.setTarget(new Vector3(0, 1.65, 1.65));
+  camera.speed = 0.15;
   camera.attachControl(canvas, true);
 
   const ambient = new HemisphericLight("StudioAmbientLight", new Vector3(0, 1, 0), scene);
@@ -52,9 +49,9 @@ export function createStarterScene(
   accentMaterial.emissiveColor = new Color3(0.01, 0.05, 0.09);
 
   const screenMaterial = new StandardMaterial("DevelopmentScreenMaterial", scene);
-  screenMaterial.diffuseColor = new Color3(0.04, 0.08, 0.14);
-  screenMaterial.emissiveColor = new Color3(0.02, 0.14, 0.22);
-  screenMaterial.specularColor = new Color3(0.25, 0.45, 0.55);
+  screenMaterial.diffuseColor = new Color3(0.02, 0.13, 0.2);
+  screenMaterial.emissiveColor = new Color3(0.02, 0.28, 0.38);
+  screenMaterial.specularColor = new Color3(0.45, 0.75, 0.85);
   screenMaterial.backFaceCulling = false;
 
   const floor = MeshBuilder.CreateGround("DevelopmentStudioFloor", { width: 9, height: 7 }, scene);
