@@ -37,6 +37,18 @@ function formatObsStatus(status: string): string {
   return status;
 }
 
+function formatVideoStatus(status: string): string {
+  if (status === "attached") {
+    return "Attached";
+  }
+
+  if (status === "error") {
+    return "Error";
+  }
+
+  return "Not Attached";
+}
+
 export function DiagnosticsPanel() {
   const diagnostics = useDiagnosticsStore();
   const note = diagnostics.lastError ?? diagnostics.message ?? "No issues.";
@@ -74,10 +86,19 @@ export function DiagnosticsPanel() {
           <dd>{diagnostics.screenMeshName ?? "Pending"}</dd>
         </div>
         <div>
+          <dt>Video</dt>
+          <dd data-testid="video-texture-status">
+            {formatVideoStatus(diagnostics.videoTextureStatus)}
+          </dd>
+        </div>
+        <div>
           <dt>OBS</dt>
           <dd>{formatObsStatus(diagnostics.obsCheckStatus)}</dd>
         </div>
       </dl>
+      <span className="sr-only" data-testid="render-loop-count">
+        {diagnostics.renderLoopCount ?? 0}
+      </span>
       <p className="diagnostic-message" data-testid="diagnostics-message">
         <span>Note</span>
         {note}

@@ -37,7 +37,7 @@ function sourceTone(state: SourceState): "neutral" | "good" | "warn" | "bad" {
 
 function outputLabel(state: StudioRuntimeState): string {
   if (state === "ready") {
-    return "Program Output";
+    return "Studio Preview";
   }
 
   if (state === "degraded") {
@@ -160,15 +160,10 @@ export function StudioScreen() {
           </section>
         </aside>
 
-        <section
-          className="runtime-stage"
-          aria-label="Studio program output"
-          data-testid="studio-preview"
-        >
+        <section className="runtime-stage" aria-label="Studio preview" data-testid="studio-preview">
           <div className="stage-toolbar">
             <div>
               <span>Studio Preview</span>
-              <strong>Program Output</strong>
             </div>
           </div>
           <div className="preview-frame">

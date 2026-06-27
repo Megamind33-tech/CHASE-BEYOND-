@@ -11,6 +11,9 @@ import {
 import { getSourceById } from "../sources/sourceRegistry";
 import type { SourceState, StudioRuntimeHandle } from "./runtimeTypes";
 
+const TARGET_HARDWARE_SCALING_LEVEL = 2;
+let activeRenderLoopCount = 0;
+
 type CreateStudioRuntimeOptions = {
   canvas: HTMLCanvasElement;
   activeSetId: string;
@@ -71,6 +74,8 @@ export async function createStudioRuntime({
       activeSourceId,
       renderStatus: "Starting Babylon.js runtime.",
       setLoadStatus: "Loading set manifest.",
+      videoTextureStatus: "not-attached",
+      renderLoopCount: activeRenderLoopCount,
       lastError: undefined,
       message: source?.message
     });
@@ -78,10 +83,12 @@ export async function createStudioRuntime({
     throwIfAborted(signal);
 
     engine = new Engine(canvas, true, {
-      preserveDrawingBuffer: true,
-      stencil: true,
-      antialias: true
+      preserveDrawingBuffer: false,
+      stencil: false,
+      antialias: false,
+      powerPreference: "high-performance"
     });
+    engine.setHardwareScalingLevel(TARGET_HARDWARE_SCALING_LEVEL);
     const loadedSet = await loadSetManifest(activeSetId);
 
     if (disposed || signal?.aborted) {
@@ -122,6 +129,7 @@ export async function createStudioRuntime({
       setLoadStatus: loadedSet.proceduralFallbackActive
         ? "Procedural starter set loaded."
         : "Set model loaded.",
+      videoTextureStatus: videoBinding ? "attached" : "not-attached",
       proceduralFallbackActive: loadedSet.proceduralFallbackActive,
       message: loadedSet.message ?? source?.message,
       screenMeshName: screenMesh.name,
@@ -130,6 +138,8 @@ export async function createStudioRuntime({
     });
 
     let lastFpsUpdate = performance.now();
+    activeRenderLoopCount += 1;
+    updateDiagnostics({ renderLoopCount: activeRenderLoopCount });
     engine.runRenderLoop(() => {
       if (!scene || disposed) {
         return;
@@ -143,6 +153,7 @@ export async function createStudioRuntime({
         updateDiagnostics({
           fps: engine?.getFps(),
           canvasSize: getCanvasSize(canvas),
+          renderLoopCount: activeRenderLoopCount,
           renderStatus: "Render loop running."
         });
       }
@@ -159,9 +170,13 @@ export async function createStudioRuntime({
       dispose: () => {
         disposed = true;
         window.removeEventListener("resize", handleResize);
+        if (activeRenderLoopCount > 0) {
+          activeRenderLoopCount -= 1;
+        }
         videoBinding?.dispose();
         scene?.dispose();
         engine?.dispose();
+        updateDiagnostics({ renderLoopCount: activeRenderLoopCount });
       }
     };
   } catch (error) {
@@ -169,6 +184,7 @@ export async function createStudioRuntime({
       videoBinding?.dispose();
       scene?.dispose();
       engine?.dispose();
+      updateDiagnostics({ renderLoopCount: activeRenderLoopCount });
       return createDisposedRuntimeHandle();
     }
 
@@ -184,6 +200,8 @@ export async function createStudioRuntime({
       activeSourceId,
       renderStatus: "Runtime stopped.",
       setLoadStatus: "Set load failed.",
+      videoTextureStatus: videoBinding ? "attached" : "error",
+      renderLoopCount: activeRenderLoopCount,
       lastError: friendlyError,
       message: friendlyError
     });
