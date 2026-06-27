@@ -1,7 +1,7 @@
 import { setManifestSchema, type SetManifest } from "../../schemas/setManifestSchema";
 import { setRegistry, type SetRegistryEntry } from "./setRegistry";
 
-export const proceduralFallbackMessage = "Starter set running in preview mode.";
+export const proceduralFallbackMessage = "Starter studio active.";
 
 export type LoadedSetManifest = {
   manifest: SetManifest;

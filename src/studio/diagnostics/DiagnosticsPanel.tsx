@@ -10,7 +10,7 @@ function formatRuntime(state: string): string {
   }
 
   if (state === "degraded") {
-    return "Preview Mode";
+    return "Preview";
   }
 
   if (state === "crashed") {
@@ -30,7 +30,7 @@ function formatSource(sourceId?: string): string {
 
 function formatObsStatus(status: string): string {
   if (status === "not-checked") {
-    return "Not checked";
+    return "Not Checked";
   }
 
   return status;

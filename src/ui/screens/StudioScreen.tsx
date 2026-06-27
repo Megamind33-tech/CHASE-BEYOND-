@@ -13,7 +13,7 @@ function runtimeLabel(state: StudioRuntimeState): string {
   }
 
   if (state === "degraded") {
-    return "Preview Mode";
+    return "Preview";
   }
 
   if (state === "crashed") {
@@ -21,22 +21,6 @@ function runtimeLabel(state: StudioRuntimeState): string {
   }
 
   return "Starting";
-}
-
-function runtimeTone(state: StudioRuntimeState): "neutral" | "good" | "warn" | "bad" {
-  if (state === "ready") {
-    return "good";
-  }
-
-  if (state === "degraded") {
-    return "warn";
-  }
-
-  if (state === "crashed") {
-    return "bad";
-  }
-
-  return "neutral";
 }
 
 function sourceTone(state: SourceState): "neutral" | "good" | "warn" | "bad" {
@@ -53,11 +37,11 @@ function sourceTone(state: SourceState): "neutral" | "good" | "warn" | "bad" {
 
 function outputLabel(state: StudioRuntimeState): string {
   if (state === "ready") {
-    return "Output Ready";
+    return "Program Output";
   }
 
   if (state === "degraded") {
-    return "Preview Output";
+    return "Studio Preview";
   }
 
   if (state === "crashed") {
@@ -78,6 +62,7 @@ export function StudioScreen() {
   const runtimeDisplay = runtimeLabel(diagnostics.studioState);
   const activeSetName = activeSet?.name ?? "Starter Studio";
   const activeSourceName = activeSource?.name ?? "No Source";
+  const fpsDisplay = diagnostics.fps ? String(Math.round(diagnostics.fps)) : "...";
 
   return (
     <main className="studio-screen" data-testid="studio-screen">
@@ -85,30 +70,23 @@ export function StudioScreen() {
         <div className="brand-lockup">
           <span className="brand-mark">B</span>
           <div>
-            <p className="eyebrow">Beyond Studio</p>
             <h1>Beyond Studio</h1>
+            <p>Virtual Broadcast Foundation</p>
           </div>
         </div>
-        <div className="header-metrics" aria-label="Studio status summary">
-          <div>
-            <span>Active set</span>
-            <strong data-testid="active-set">{activeSetName}</strong>
-          </div>
-          <div>
-            <span>Output</span>
-            <strong>{outputLabel(diagnostics.studioState)}</strong>
-          </div>
-          <div>
-            <span>Diagnostics</span>
-            <strong>{runtimeDisplay}</strong>
-          </div>
+        <div className="header-status-line" aria-label="Studio status summary">
+          <span>
+            Set: <strong data-testid="active-set">{activeSetName}</strong>
+          </span>
+          <span>
+            Output: <strong>{outputLabel(diagnostics.studioState)}</strong>
+          </span>
+          <span>
+            FPS: <strong>{fpsDisplay}</strong>
+          </span>
         </div>
-        <div className="header-status">
-          <StatusPill
-            label={runtimeDisplay}
-            tone={runtimeTone(diagnostics.studioState)}
-            data-testid="runtime-status"
-          />
+        <div className="header-actions">
+          <span className="obs-status">OBS: Not Checked</span>
           <button type="button" className="secondary-action" onClick={goToHome}>
             Home
           </button>
@@ -123,26 +101,33 @@ export function StudioScreen() {
             data-testid="source-manager"
           >
             <div className="panel-heading">
-              <p className="eyebrow">Sources</p>
-              <h2 id="source-manager-heading" data-testid="active-source">
-                {activeSourceName}
-              </h2>
+              <p className="eyebrow" id="source-manager-heading">
+                Sources
+              </p>
             </div>
             <ul className="option-list">
               {sourceRegistry.map((source) => (
                 <li key={source.id} className="option-row">
-                  <div>
-                    <strong>{source.name}</strong>
-                    <StatusPill label={source.message} tone={sourceTone(source.state)} />
+                  <div className="source-row-main">
+                    <strong
+                      data-testid={source.id === activeSourceId ? "active-source" : undefined}
+                    >
+                      {source.name}
+                    </strong>
+                    {source.id === activeSourceId ? (
+                      <StatusPill label="Active" tone="good" />
+                    ) : (
+                      <StatusPill label={source.message} tone={sourceTone(source.state)} />
+                    )}
                   </div>
-                  {source.selectable ? (
+                  {source.selectable && source.id !== activeSourceId ? (
                     <button
                       type="button"
                       className="small-action"
                       aria-pressed={source.id === activeSourceId}
                       onClick={() => setActiveSourceId(source.id)}
                     >
-                      {source.id === activeSourceId ? "Active" : "Select"}
+                      Select
                     </button>
                   ) : (
                     <span className="source-action-spacer" aria-hidden="true" />
@@ -158,8 +143,9 @@ export function StudioScreen() {
             data-testid="set-selector"
           >
             <div className="panel-heading">
-              <p className="eyebrow">Sets</p>
-              <h2 id="set-selector-heading">Starter Studio</h2>
+              <p className="eyebrow" id="set-selector-heading">
+                Sets
+              </p>
             </div>
             <div className="set-card">
               <img
@@ -169,24 +155,25 @@ export function StudioScreen() {
               <div>
                 <strong>{activeSetName}</strong>
                 <span>Active</span>
-                <StatusPill label={runtimeDisplay} tone={runtimeTone(diagnostics.studioState)} />
               </div>
             </div>
           </section>
         </aside>
 
-        <section className="runtime-stage" aria-label="Studio program output">
+        <section
+          className="runtime-stage"
+          aria-label="Studio program output"
+          data-testid="studio-preview"
+        >
           <div className="stage-toolbar">
             <div>
               <span>Studio Preview</span>
-              <strong>{activeSetName}</strong>
+              <strong>Program Output</strong>
             </div>
-            <StatusPill
-              label={outputLabel(diagnostics.studioState)}
-              tone={runtimeTone(diagnostics.studioState)}
-            />
           </div>
-          <StudioCanvas activeSetId={activeSetId} activeSourceId={activeSourceId} />
+          <div className="preview-frame">
+            <StudioCanvas activeSetId={activeSetId} activeSourceId={activeSourceId} />
+          </div>
         </section>
 
         <aside className="right-rail">
@@ -194,18 +181,18 @@ export function StudioScreen() {
         </aside>
       </section>
 
-      <footer className="status-strip" aria-label="Runtime summary">
-        <span>
-          Runtime <strong>{runtimeDisplay}</strong>
+      <footer className="status-strip" aria-label="Runtime summary" data-testid="bottom-status">
+        <span data-testid="runtime-status">
+          Runtime: <strong>{runtimeDisplay}</strong>
         </span>
         <span>
-          FPS <strong>{diagnostics.fps ? Math.round(diagnostics.fps) : "..."}</strong>
+          FPS: <strong>{fpsDisplay}</strong>
         </span>
         <span>
-          Source <strong>{activeSourceName}</strong>
+          Source: <strong>{activeSourceName}</strong>
         </span>
         <span>
-          Set <strong>{activeSetName}</strong>
+          Set: <strong>{activeSetName}</strong>
         </span>
       </footer>
     </main>
