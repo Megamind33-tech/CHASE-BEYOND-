@@ -1,0 +1,52 @@
+{
+  "name": "beyond-foundation",
+  "version": "1.0.0",
+  "description": "First framework foundation for Beyond, a lightweight virtual broadcast studio.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "vite build",
+    "test:smoke": "playwright test",
+    "evidence": "npm run typecheck && npm run test && npm run build && npm run test:smoke"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Megamind33-tech/CHASE-BEYOND-.git"
+  },
+  "keywords": [
+    "broadcast",
+    "babylonjs",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Megamind33-tech/CHASE-BEYOND-/issues"
+  },
+  "homepage": "https://github.com/Megamind33-tech/CHASE-BEYOND-#readme",
+  "dependencies": {
+    "@babylonjs/core": "^9.14.0",
+    "@babylonjs/loaders": "^9.14.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "eslint": "^10.6.0",
+    "playwright": "^1.61.1",
+    "prettier": "^3.9.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.9"
+  }
+}

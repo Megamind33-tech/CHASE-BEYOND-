@@ -1,0 +1,15 @@
+{
+  "id": "starter-studio",
+  "name": "Starter Studio",
+  "version": 1,
+  "model": "/sets/starter-studio/studio.glb",
+  "thumbnail": "/sets/starter-studio/thumb-placeholder.svg",
+  "screens": [
+    {
+      "id": "main-screen",
+      "meshName": "Screen_Main",
+      "label": "Main screen",
+      "defaultSourceId": "none"
+    }
+  ]
+}
