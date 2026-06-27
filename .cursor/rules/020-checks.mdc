@@ -1,0 +1,12 @@
+---
+description: Require checks for Beyond changes.
+alwaysApply: true
+---
+
+# Checks
+
+Do not call a feature complete until it is checked.
+
+Report typecheck, tests, build, browser check, and known limitations.
+
+For visual work, include proof that the screen changed as expected.
