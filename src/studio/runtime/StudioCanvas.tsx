@@ -19,8 +19,14 @@ export function StudioCanvas({ activeSetId, activeSourceId }: StudioCanvasProps)
 
     let cancelled = false;
     let runtime: StudioRuntimeHandle | undefined;
+    const abortController = new AbortController();
 
-    void createStudioRuntime({ canvas, activeSetId, activeSourceId })
+    void createStudioRuntime({
+      canvas,
+      activeSetId,
+      activeSourceId,
+      signal: abortController.signal
+    })
       .then((handle) => {
         if (cancelled) {
           handle.dispose();
@@ -33,6 +39,7 @@ export function StudioCanvas({ activeSetId, activeSourceId }: StudioCanvasProps)
 
     return () => {
       cancelled = true;
+      abortController.abort();
       runtime?.dispose();
     };
   }, [activeSetId, activeSourceId]);

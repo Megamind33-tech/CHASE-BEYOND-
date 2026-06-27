@@ -7,7 +7,9 @@ export const initialDiagnostics: StudioRuntimeDiagnostics = {
   sourceState: "unavailable",
   renderStatus: "Runtime has not started.",
   setLoadStatus: "No set loaded.",
+  videoTextureStatus: "not-attached",
   proceduralFallbackActive: false,
+  renderLoopCount: 0,
   obsCheckStatus: "not-checked"
 };
 

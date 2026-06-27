@@ -10,10 +10,12 @@ export const SOURCE_STATES = [
   "ended",
   "error"
 ] as const;
+export const VIDEO_TEXTURE_STATES = ["attached", "not-attached", "error"] as const;
 
 export type StudioRuntimeState = (typeof STUDIO_RUNTIME_STATES)[number];
 export type SetState = (typeof SET_STATES)[number];
 export type SourceState = (typeof SOURCE_STATES)[number];
+export type VideoTextureState = (typeof VIDEO_TEXTURE_STATES)[number];
 
 export type RuntimeStatus = {
   studioState: StudioRuntimeState;
@@ -34,11 +36,13 @@ export type StudioRuntimeDiagnostics = RuntimeStatus & {
   sourceState: SourceState;
   renderStatus: string;
   setLoadStatus: string;
+  videoTextureStatus: VideoTextureState;
   proceduralFallbackActive: boolean;
   message?: string;
   screenMeshName?: string;
   meshCount?: number;
   canvasSize?: string;
+  renderLoopCount?: number;
   obsCheckStatus: "not-checked" | "checked" | "failed";
 };
 

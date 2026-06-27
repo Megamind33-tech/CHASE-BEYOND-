@@ -44,6 +44,20 @@ A valid OBS check should include:
 - Capture method used.
 - Known limitations.
 
+## Manual capture check
+
+Use this checklist when preparing phase 1 OBS proof:
+
+1. Run `npm run dev`.
+2. Open the local Beyond URL, usually `http://localhost:5173`.
+3. Open OBS.
+4. Add either a Browser Source pointed at the Beyond URL or a Window Capture of the browser.
+5. Confirm the Beyond Studio preview is visible in OBS.
+6. Record 10 seconds.
+7. Save the screenshot, recording note, and observed settings under `evidence/YYYY-MM-DD/`.
+
+Do not mark OBS as checked in the app until the evidence is saved and reviewed.
+
 ## Do not claim yet
 
 Do not claim these until separately implemented and tested:

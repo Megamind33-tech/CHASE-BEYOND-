@@ -4,13 +4,21 @@ import { useDiagnosticsStore } from "../diagnostics/diagnosticsStore";
 import { createStarterScene } from "../scene/createStarterScene";
 import { findScreenMesh } from "../scene/screenBinding";
 import { loadSetManifest } from "../sets/setLoader";
+import {
+  attachVideoSourceToScreen,
+  type VideoSourceBinding
+} from "../sources/createVideoSourceTexture";
 import { getSourceById } from "../sources/sourceRegistry";
 import type { SourceState, StudioRuntimeHandle } from "./runtimeTypes";
+
+const TARGET_HARDWARE_SCALING_LEVEL = 2;
+let activeRenderLoopCount = 0;
 
 type CreateStudioRuntimeOptions = {
   canvas: HTMLCanvasElement;
   activeSetId: string;
   activeSourceId: string;
+  signal?: AbortSignal;
 };
 
 function getFriendlyError(error: unknown): string {
@@ -29,16 +37,31 @@ function getCanvasSize(canvas: HTMLCanvasElement): string {
   return `${canvas.width}x${canvas.height}`;
 }
 
+function createDisposedRuntimeHandle(): StudioRuntimeHandle {
+  return {
+    sceneHasScreenMain: () => false,
+    dispose: () => undefined
+  };
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw new Error("Runtime creation aborted.");
+  }
+}
+
 export async function createStudioRuntime({
   canvas,
   activeSetId,
-  activeSourceId
+  activeSourceId,
+  signal
 }: CreateStudioRuntimeOptions): Promise<StudioRuntimeHandle> {
   const updateDiagnostics = useDiagnosticsStore.getState().updateDiagnostics;
   const source = getSourceById(activeSourceId);
   const sourceState: SourceState = source?.state ?? "error";
   let engine: Engine | undefined;
   let scene: Scene | undefined;
+  let videoBinding: VideoSourceBinding | null = null;
   let disposed = false;
   let screenMainFound = false;
 
@@ -51,23 +74,26 @@ export async function createStudioRuntime({
       activeSourceId,
       renderStatus: "Starting Babylon.js runtime.",
       setLoadStatus: "Loading set manifest.",
+      videoTextureStatus: "not-attached",
+      renderLoopCount: activeRenderLoopCount,
       lastError: undefined,
       message: source?.message
     });
 
+    throwIfAborted(signal);
+
     engine = new Engine(canvas, true, {
-      preserveDrawingBuffer: true,
-      stencil: true,
-      antialias: true
+      preserveDrawingBuffer: false,
+      stencil: false,
+      antialias: false,
+      powerPreference: "high-performance"
     });
+    engine.setHardwareScalingLevel(TARGET_HARDWARE_SCALING_LEVEL);
     const loadedSet = await loadSetManifest(activeSetId);
 
-    if (disposed) {
+    if (disposed || signal?.aborted) {
       engine.dispose();
-      return {
-        sceneHasScreenMain: () => false,
-        dispose: () => undefined
-      };
+      return createDisposedRuntimeHandle();
     }
 
     scene = new Scene(engine);
@@ -80,16 +106,30 @@ export async function createStudioRuntime({
       throw new Error("Required screen mesh was not found in the model.");
     }
 
+    throwIfAborted(signal);
+
+    videoBinding = source
+      ? await attachVideoSourceToScreen(starterScene.scene, screenMesh, source, signal)
+      : null;
+
+    if (signal?.aborted) {
+      videoBinding?.dispose();
+      scene.dispose();
+      engine.dispose();
+      return createDisposedRuntimeHandle();
+    }
+
     updateDiagnostics({
       studioState: loadedSet.proceduralFallbackActive ? "degraded" : "ready",
       setState: "ready",
-      sourceState,
+      sourceState: videoBinding ? "active" : sourceState,
       activeSetId: loadedSet.manifest.id,
       activeSourceId,
       renderStatus: "Render loop running.",
       setLoadStatus: loadedSet.proceduralFallbackActive
         ? "Procedural starter set loaded."
         : "Set model loaded.",
+      videoTextureStatus: videoBinding ? "attached" : "not-attached",
       proceduralFallbackActive: loadedSet.proceduralFallbackActive,
       message: loadedSet.message ?? source?.message,
       screenMeshName: screenMesh.name,
@@ -98,6 +138,8 @@ export async function createStudioRuntime({
     });
 
     let lastFpsUpdate = performance.now();
+    activeRenderLoopCount += 1;
+    updateDiagnostics({ renderLoopCount: activeRenderLoopCount });
     engine.runRenderLoop(() => {
       if (!scene || disposed) {
         return;
@@ -111,6 +153,7 @@ export async function createStudioRuntime({
         updateDiagnostics({
           fps: engine?.getFps(),
           canvasSize: getCanvasSize(canvas),
+          renderLoopCount: activeRenderLoopCount,
           renderStatus: "Render loop running."
         });
       }
@@ -127,12 +170,26 @@ export async function createStudioRuntime({
       dispose: () => {
         disposed = true;
         window.removeEventListener("resize", handleResize);
+        if (activeRenderLoopCount > 0) {
+          activeRenderLoopCount -= 1;
+        }
+        videoBinding?.dispose();
         scene?.dispose();
         engine?.dispose();
+        updateDiagnostics({ renderLoopCount: activeRenderLoopCount });
       }
     };
   } catch (error) {
+    if (signal?.aborted) {
+      videoBinding?.dispose();
+      scene?.dispose();
+      engine?.dispose();
+      updateDiagnostics({ renderLoopCount: activeRenderLoopCount });
+      return createDisposedRuntimeHandle();
+    }
+
     const friendlyError = getFriendlyError(error);
+    videoBinding?.dispose();
     scene?.dispose();
     engine?.dispose();
     updateDiagnostics({
@@ -143,6 +200,8 @@ export async function createStudioRuntime({
       activeSourceId,
       renderStatus: "Runtime stopped.",
       setLoadStatus: "Set load failed.",
+      videoTextureStatus: videoBinding ? "attached" : "error",
+      renderLoopCount: activeRenderLoopCount,
       lastError: friendlyError,
       message: friendlyError
     });

@@ -1,4 +1,5 @@
 import { useDiagnosticsStore } from "./diagnosticsStore";
+import { getSourceById } from "../sources/sourceRegistry";
 
 function formatFps(fps?: number): string {
   return typeof fps === "number" ? String(Math.round(fps)) : "...";
@@ -10,7 +11,7 @@ function formatRuntime(state: string): string {
   }
 
   if (state === "degraded") {
-    return "Preview Mode";
+    return "Preview";
   }
 
   if (state === "crashed") {
@@ -25,15 +26,27 @@ function formatSource(sourceId?: string): string {
     return "None";
   }
 
-  return sourceId;
+  return getSourceById(sourceId)?.name ?? sourceId;
 }
 
 function formatObsStatus(status: string): string {
   if (status === "not-checked") {
-    return "Not checked";
+    return "Not Checked";
   }
 
   return status;
+}
+
+function formatVideoStatus(status: string): string {
+  if (status === "attached") {
+    return "Attached";
+  }
+
+  if (status === "error") {
+    return "Error";
+  }
+
+  return "Not Attached";
 }
 
 export function DiagnosticsPanel() {
@@ -73,10 +86,19 @@ export function DiagnosticsPanel() {
           <dd>{diagnostics.screenMeshName ?? "Pending"}</dd>
         </div>
         <div>
+          <dt>Video</dt>
+          <dd data-testid="video-texture-status">
+            {formatVideoStatus(diagnostics.videoTextureStatus)}
+          </dd>
+        </div>
+        <div>
           <dt>OBS</dt>
           <dd>{formatObsStatus(diagnostics.obsCheckStatus)}</dd>
         </div>
       </dl>
+      <span className="sr-only" data-testid="render-loop-count">
+        {diagnostics.renderLoopCount ?? 0}
+      </span>
       <p className="diagnostic-message" data-testid="diagnostics-message">
         <span>Note</span>
         {note}
