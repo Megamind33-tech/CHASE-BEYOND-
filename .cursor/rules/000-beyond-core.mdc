@@ -1,0 +1,22 @@
+---
+description: Always follow Beyond architecture and agent governance.
+alwaysApply: true
+---
+
+# Beyond Core Rule
+
+Before editing, read `AGENTS.md` and the relevant files in `docs/`.
+
+Foundation stack:
+
+- Vite.
+- React.
+- TypeScript.
+- Babylon.js.
+- OBS capture output.
+- Vitest.
+- Playwright.
+
+Do not add frozen dependencies until the core foundation works and the dependency decision file is updated.
+
+Every patch must be small, testable, and reported with proof.
