@@ -1,0 +1,20 @@
+---
+description: Prevent fake broadcast dashboard work.
+alwaysApply: true
+---
+
+# No Fake UI
+
+Every visible control must do real work or clearly explain why it is unavailable.
+
+Do not create fake sources, fake set thumbnails, fake uploads, fake preview/program buttons, or fake diagnostics.
+
+For foundation work, the UI must show:
+
+- Active source.
+- Active set.
+- Source state.
+- FPS or runtime status.
+- Last runtime issue.
+
+If a button is added, wire it to the actual runtime behavior in the same patch.
