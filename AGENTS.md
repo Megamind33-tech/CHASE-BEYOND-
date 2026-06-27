@@ -80,9 +80,24 @@ Before any code change, read:
 19. `docs/ROADMAP.md`
 20. `docs/ADR/0001-foundation-architecture.md`
 
+## Audit workflow
+
+Audit is a formal workflow, separate from building.
+
+An audit agent must not build features. It must read:
+
+1. `docs/AUDIT_GUIDE.md`
+2. `docs/AUDIT_CHECKLIST.md`
+3. `docs/DEFICIENCY_REPORT_TEMPLATE.md`
+4. `docs/AUDIT_AGENT_PROMPT.md`
+
+The audit agent reports deficiencies, inconsistencies, fake work, missing evidence, hallucinated claims, UI drift, architecture drift, dependency violations, performance risks, and anything that moves Beyond away from the desired product direction.
+
+Audit output must use `docs/DEFICIENCY_REPORT_TEMPLATE.md`.
+
 ## Reasoning order
 
-Before changing files, every agent must:
+Before changing files, every builder agent must:
 
 1. Identify the exact business goal.
 2. Identify the smallest technical change needed.
