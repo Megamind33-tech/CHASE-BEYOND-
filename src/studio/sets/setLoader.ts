@@ -12,6 +12,12 @@ export type LoadedSetManifest = {
   message?: string;
 };
 
+function isModelAssetResponse(response: Response): boolean {
+  const contentType = response.headers.get("content-type") ?? "";
+
+  return response.ok && !contentType.includes("text/html");
+}
+
 export async function loadSetManifest(setId: string): Promise<LoadedSetManifest> {
   const entry = setRegistry.find((candidate) => candidate.id === setId);
 
@@ -28,7 +34,7 @@ export async function loadSetManifest(setId: string): Promise<LoadedSetManifest>
   const manifestJson: unknown = await manifestResponse.json();
   const manifest = setManifestSchema.parse(manifestJson);
   const modelResponse = await fetch(manifest.model, { method: "HEAD" });
-  const modelAvailable = modelResponse.ok;
+  const modelAvailable = isModelAssetResponse(modelResponse);
 
   return {
     manifest,
