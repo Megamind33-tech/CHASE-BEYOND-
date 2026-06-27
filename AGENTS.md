@@ -160,3 +160,15 @@ The foundation is done only when:
 10. Tests and build pass.
 
 Working simple beats beautiful fake.
+
+## Cursor Cloud specific instructions
+
+State of the repo (as of this writing): this is a **documentation/specification-only** scaffold. There is **no application code yet** — no `package.json`, no `src/`, no `public/`, no lockfile, and no tests. The intended foundation (Vite + React + TypeScript + Babylon.js, with Vitest and Playwright) described in `README.md` and `docs/` has not been bootstrapped.
+
+Consequences for any agent starting here:
+
+- Toolchain is already present and matches CI (`.github/workflows/ci.yml` targets Node 22): `node` 22.x, `npm` 10.x (plus `pnpm`/`yarn` if preferred). Nothing needs installing until a manifest exists.
+- `npm ci` / `npm run typecheck|test|build|test:smoke` all fail today because there is no `package.json`. CI's `npm ci` step likewise fails until the app is bootstrapped. This is expected, not a broken environment.
+- There is no application to run, build, or smoke-test yet. Do not fabricate one as part of "environment setup" — building the MVP 0.1 is product implementation work governed by the strict rules above (`docs/MVP_SCOPE.md`, frozen-dependency list, evidence/proof gates).
+
+Once the app is bootstrapped (a `package.json` with the standard scripts from `docs/TESTING_STRATEGY.md`): install with `npm install`; develop with `npm run dev` (Vite); checks are `npm run typecheck`, `npm run test` (Vitest), `npm run build`, and `npm run test:smoke` (Playwright). Use Node 22 to match CI. Place code per `docs/FOLDER_STRUCTURE.md`.
