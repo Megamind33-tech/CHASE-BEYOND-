@@ -1,8 +1,7 @@
 import { setManifestSchema, type SetManifest } from "../../schemas/setManifestSchema";
 import { setRegistry, type SetRegistryEntry } from "./setRegistry";
 
-export const proceduralFallbackMessage =
-  "Using development procedural starter set because studio.glb is not present.";
+export const proceduralFallbackMessage = "Starter set running in preview mode.";
 
 export type LoadedSetManifest = {
   manifest: SetManifest;

@@ -1,6 +1,6 @@
 {
   "id": "starter-studio",
-  "name": "Development Starter Set",
+  "name": "Starter Studio",
   "version": 1,
   "model": "/sets/starter-studio/studio.glb",
   "thumbnail": "/sets/starter-studio/thumb-placeholder.svg",
@@ -8,7 +8,7 @@
     {
       "id": "main-screen",
       "meshName": "Screen_Main",
-      "label": "Main development screen",
+      "label": "Main screen",
       "defaultSourceId": "none"
     }
   ]

@@ -4,10 +4,10 @@ import { sampleVideoSource } from "./sampleSource";
 export const sourceRegistry: SourceRegistryEntry[] = [
   {
     id: "none",
-    name: "No source",
+    name: "No Source",
     type: "none",
     state: "unavailable",
-    message: "No media source is active. The development screen uses a neutral material.",
+    message: "Idle",
     selectable: true
   },
   sampleVideoSource,
@@ -16,7 +16,7 @@ export const sourceRegistry: SourceRegistryEntry[] = [
     name: "Camera",
     type: "camera",
     state: "unavailable",
-    message: "Camera source is registered for the foundation but is not implemented or tested yet.",
+    message: "Unavailable",
     selectable: false
   }
 ];

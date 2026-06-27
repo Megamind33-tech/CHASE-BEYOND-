@@ -1,11 +1,10 @@
 import type { SourceRegistryEntry } from "../runtime/runtimeTypes";
 
-export const missingSampleVideoMessage =
-  "No real sample media file exists yet. Add a lightweight file under public/media before enabling sample-video.";
+export const missingSampleVideoMessage = "Missing";
 
 export const sampleVideoSource: SourceRegistryEntry = {
   id: "sample-video",
-  name: "Sample video",
+  name: "Sample Video",
   type: "sample-video",
   url: "/media/sample-video.mp4",
   state: "unavailable",

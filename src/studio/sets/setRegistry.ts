@@ -7,7 +7,7 @@ export type SetRegistryEntry = {
 export const setRegistry: SetRegistryEntry[] = [
   {
     id: "starter-studio",
-    name: "Development Starter Set",
+    name: "Starter Studio",
     manifestPath: "/sets/starter-studio/manifest.json"
   }
 ];

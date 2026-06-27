@@ -6,19 +6,13 @@ export function HomeScreen() {
   return (
     <main className="home-screen">
       <section className="home-hero">
-        <p className="eyebrow">Beyond foundation</p>
-        <h1>Lightweight virtual broadcast studio</h1>
-        <p>
-          This first foundation opens a real Babylon.js runtime, loads the development starter
-          manifest, and reports diagnostics while production assets are prepared.
-        </p>
+        <p className="eyebrow">Beyond</p>
+        <h1>Virtual studio control</h1>
+        <p>Open the studio preview, check active sources and sets, and monitor output status.</p>
         <button type="button" className="primary-action" onClick={startStudio}>
           Start studio session
         </button>
-        <p className="status-note">
-          Development status: procedural starter set only. Real GLB set and sample media are
-          pending.
-        </p>
+        <p className="status-note">Starter Studio is available in preview mode.</p>
       </section>
     </main>
   );

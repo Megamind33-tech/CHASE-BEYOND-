@@ -7,7 +7,7 @@ describe("schema contracts", () => {
   it("accepts a valid starter set manifest", () => {
     const result = setManifestSchema.safeParse({
       id: "starter-studio",
-      name: "Development Starter Set",
+      name: "Starter Studio",
       version: 1,
       model: "/sets/starter-studio/studio.glb",
       thumbnail: "/sets/starter-studio/thumb-placeholder.svg",
@@ -15,7 +15,7 @@ describe("schema contracts", () => {
         {
           id: "main-screen",
           meshName: "Screen_Main",
-          label: "Main development screen",
+          label: "Main screen",
           defaultSourceId: "none"
         }
       ]
@@ -27,7 +27,7 @@ describe("schema contracts", () => {
   it("rejects invalid set manifest model paths", () => {
     const result = setManifestSchema.safeParse({
       id: "starter-studio",
-      name: "Development Starter Set",
+      name: "Starter Studio",
       version: 1,
       model: "/sets/starter-studio/studio.obj",
       thumbnail: "/sets/starter-studio/thumb-placeholder.svg",
@@ -46,7 +46,7 @@ describe("schema contracts", () => {
     expect(
       sourceManifestSchema.parse({
         id: "sample-video",
-        name: "Sample video",
+        name: "Sample Video",
         type: "sample-video",
         url: "/media/sample-video.mp4"
       })
