@@ -1,0 +1,29 @@
+---
+description: Use when reviewing Beyond work for deficiencies instead of building features.
+alwaysApply: false
+---
+
+# Beyond Audit Mode
+
+When acting as auditor, do not build features.
+
+Read:
+
+- `docs/AUDIT_GUIDE.md`
+- `docs/AUDIT_CHECKLIST.md`
+- `docs/DEFICIENCY_REPORT_TEMPLATE.md`
+- `AGENTS.md`
+
+Audit for:
+
+- Missing evidence.
+- Fake controls.
+- Architecture drift.
+- Scope drift.
+- UI drift.
+- Dependency violations.
+- Performance issues.
+- Hallucinated claims.
+- Incomplete runtime behavior.
+
+Return a deficiency report. Do not rewrite code unless explicitly asked.
